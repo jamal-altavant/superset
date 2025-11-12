@@ -1450,7 +1450,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                     # This should rarely happen with proper fallbacks
                     raise QueryObjectValidationError(
                         _(
-                            "Unable to identify temporal column for date range time comparison."  # noqa: E501
+                            "Unable to identify temporal column for date range time comparison. "  # noqa: E501
                             "Please ensure your dataset has a properly configured time column."  # noqa: E501
                         )
                     )
