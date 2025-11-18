@@ -488,14 +488,13 @@ export default function RangeFilterPlugin(props: PluginFilterRangeProps) {
     return { message: defaultMessage, status: 'help' as const };
   }, [error, min, max, enableSingleValue, metadataText]);
 
-  const MessageDisplay = useCallback(() => {
-    const { message, status } = getMessageAndStatus();
-
-    if (filterBarOrientation === FilterBarOrientation.Vertical) {
-      return <StatusMessage status={status}>{message}</StatusMessage>;
+  const getFormItemExtraMessage = useCallback(() => {
+    if (filterBarOrientation !== FilterBarOrientation.Vertical) {
+      return undefined;
     }
 
-    return null;
+    const { message, status } = getMessageAndStatus();
+    return <StatusMessage status={status}>{message}</StatusMessage>;
   }, [getMessageAndStatus, filterBarOrientation]);
 
   const InfoTooltip = useCallback(() => {
@@ -620,7 +619,10 @@ export default function RangeFilterPlugin(props: PluginFilterRangeProps) {
       {Number.isNaN(Number(min)) || Number.isNaN(Number(max)) ? (
         <h4>{t('Chosen non-numeric column')}</h4>
       ) : (
-        <FormItem aria-labelledby={`filter-name-${formData.nativeFilterId}`}>
+        <FormItem
+          aria-labelledby={`filter-name-${formData.nativeFilterId}`}
+          extra={getFormItemExtraMessage()}
+        >
           {filterBarOrientation === FilterBarOrientation.Horizontal &&
           !isOverflowingFilterBar ? (
             <FocusContainer ref={inputRef} tabIndex={-1}>
@@ -639,32 +641,28 @@ export default function RangeFilterPlugin(props: PluginFilterRangeProps) {
               </HorizontalLayout>
             </FocusContainer>
           ) : (
-            <>
-              <div style={{ position: 'relative' }}>
-                {isOverflowingFilterBar && (
-                  <TooltipContainer>
-                    <InfoTooltip />
-                  </TooltipContainer>
-                )}
-                <FocusContainer
-                  ref={inputRef}
-                  tabIndex={-1}
-                  css={css`
-                    padding-top: 1px;
-                    margin-top: -1px;
-                  `}
-                >
-                  {(rangeDisplayMode === RangeDisplayMode.Slider ||
-                    rangeDisplayMode === RangeDisplayMode.SliderAndInput) &&
-                    renderSlider()}
-                  {(rangeDisplayMode === RangeDisplayMode.Input ||
-                    rangeDisplayMode === RangeDisplayMode.SliderAndInput) &&
-                    renderInputs()}
-                </FocusContainer>
-
-                <MessageDisplay />
-              </div>
-            </>
+            <div style={{ position: 'relative' }}>
+              {isOverflowingFilterBar && (
+                <TooltipContainer>
+                  <InfoTooltip />
+                </TooltipContainer>
+              )}
+              <FocusContainer
+                ref={inputRef}
+                tabIndex={-1}
+                css={css`
+                  padding-top: 1px;
+                  margin-top: -1px;
+                `}
+              >
+                {(rangeDisplayMode === RangeDisplayMode.Slider ||
+                  rangeDisplayMode === RangeDisplayMode.SliderAndInput) &&
+                  renderSlider()}
+                {(rangeDisplayMode === RangeDisplayMode.Input ||
+                  rangeDisplayMode === RangeDisplayMode.SliderAndInput) &&
+                  renderInputs()}
+              </FocusContainer>
+            </div>
           )}
         </FormItem>
       )}

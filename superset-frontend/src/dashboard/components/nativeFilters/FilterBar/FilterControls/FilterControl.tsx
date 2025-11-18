@@ -96,6 +96,12 @@ const VerticalFilterControlContainer = styled(AllFilterControlContainer)`
     margin-bottom: ${({ theme }) => theme.sizeUnit * 2}px;
   }
 
+  @media (min-width: 575px) {
+    .ant-form-item:has(.ant-form-item-additional) {
+      margin-bottom: ${({ theme }) => theme.sizeUnit * 18}px;
+    }
+  }
+
   && .ant-form-item-label > label {
     text-transform: none;
     width: 100%;
