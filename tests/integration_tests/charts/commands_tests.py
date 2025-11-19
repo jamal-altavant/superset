@@ -14,6 +14,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+import time
 from unittest.mock import patch
 
 import pytest
@@ -383,9 +384,15 @@ class TestChartsUpdateCommand(SupersetTestCase):
         }
         command = UpdateChartCommand(model_id, json_obj)
         last_saved_before = db.session.query(Slice).get(pk).last_saved_at
+        # Sleep to ensure timestamp differs at MySQL's second precision
+        # MySQL DATETIME defaults to second-level precision, truncating microseconds
+        time.sleep(1)
         command.run()
         chart = db.session.query(Slice).get(pk)
-        assert chart.last_saved_at != last_saved_before
+        # Normalize microseconds for database-agnostic comparison
+        assert chart.last_saved_at.replace(microsecond=0) != last_saved_before.replace(
+            microsecond=0
+        )
         assert chart.last_saved_by == user
 
     @patch("superset.utils.core.g")
